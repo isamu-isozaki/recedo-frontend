@@ -4,16 +4,14 @@
  */
 import {combineReducers} from 'redux';
 import authReducer from './auth';
-import incomingMailReducer from './mail/incomingMail';
-import masterMailReducer from './mail/masterMail';
-import userMailReducer from './mail/userMail';
-import domainReducer from './domains';
+import groupReducer from './group';
+import transactionReducer from './transaction';
+
+
 
 
 export default combineReducers({
   auth: authReducer,
-  incomingMail: incomingMailReducer,
-  masterMail: masterMailReducer,
-  userMail: userMailReducer,
-  domains: domainReducer,
+  group: groupReducer,
+  transaction: transactionReducer,
 });

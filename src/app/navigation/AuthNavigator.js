@@ -5,55 +5,89 @@
 import React, { useState, useEffect } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { loadUser } from 'app/store/auth';
-import { loadIncomingMail } from 'app/store/mail/incomingMail';
-import { loadMasterMail } from 'app/store/mail/masterMail';
-import { loadUserMail } from 'app/store/mail/userMail';
-import { loadDomains } from 'app/store/domains';
+import { loadUser, loadUsersByIds } from 'app/store/auth';
+import { loadGroups } from 'app/store/group';
+import { loadTransactions } from 'app/store/transaction';
+
+
 
 import { connect } from 'react-redux';
-import Registration from '../screens/Registration';
 import AuthScreen from '../screens/AuthScreen';
 import SignInStack from './SignInStack';
+import PropTypes from 'prop-types';
 
+function onlyUnique(value, index, self) {
+  return self.indexOf(value) === index;
+}
+
+function getGroupUsers(byId, groupIds, invitedGroupIds, userIds) {
+  const groups = groupIds.map(groupId => byId[groupId])
+  const invitedGroups = invitedGroupIds.map(groupId => byId[groupId])
+  let groupUsers = []
+  
+  for(let i = 0; i < groups.length; i++) {
+    groupUsers = [...groupUsers, ...groups[i].userIds, ...groups[i].invitedUserIds]
+  }
+  for(let i = 0; i < invitedGroups.length; i++) {
+    groupUsers = [...groupUsers, ...invitedGroups[i].userIds, ...invitedGroups[i].invitedUserIds]
+  }
+  groupUsers = groupUsers.filter(onlyUnique);
+  groupUsers = groupUsers.filter(userId => !userIds.includes(userId))
+
+  return groupUsers
+}
 /**
  *
  * @param {object} param0
- * user {object}. Current user
- * loadUser {function}. Loads user
- * loadIncomingMail {function}. Load all incoming mails
- * loadMasterMail {function}. Load all master mails
- * loadUserMail {function}. Load all user mails
- * loadDomains {function}. Load all domains
- * Handle firebase sign in/out and load all data from backend. If signed in, go to main app in <SignInStack>
  */
 function AuthNavigator({
   user,
-  isRegistered,
+  userInitializing,
+  userIdsIsInitializing,
+  groupInitializing,
+  transactionInitializing,
   loadUser,
-  loadDomains,
-  loadIncomingMail,
-  loadMasterMail,
-  loadUserMail,
+  loadUsersByIds,
+  loadGroups,
+  loadTransactions
 }) {
   const [initializing, setInitializing] = useState(true);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  async function onAuthStateChanged(result) {
+  const [preinitializing, setPreinitializing] = useState(true);
+  const loadedEverything = !userInitializing && !userIdsIsInitializing && !groupInitializing && !transactionInitializing;
+
+  const DebounceDueTime = 400;
+  let debounceTimeout;
+  // Below relies on the fact that auth change gets called multiple times unpredictably. fix so that
+  // once everything is loaded, it can mobe on to 
+  async function handleAuthStateChanged(result) {
     if (!result) {
+      console.log('no result')
       setInitializing(true);
+    } if(initializing && loadedEverything) {
+      console.log('loaded everything')
+      setInitializing(false)
+    } if (result && initializing && preinitializing) {
+      console.log('init')
+      setPreinitializing(false)
+      // Only do the below once
+      const user = await loadUser()
+      const {groups, invitedGroups} = await loadGroups()
+      const additionalUsers = getGroupUsers({...groups, ...invitedGroups}, Object.keys(groups), Object.keys(invitedGroups), [user._id])
+      await loadUsersByIds(additionalUsers)
+      await loadTransactions()
     }
-    if (result && initializing) {
-      await loadUser();
-      await loadDomains();
-      if (user) {
-        if (user.isRegistered) {
-          loadIncomingMail();
-          loadMasterMail();
-          loadUserMail();
-        }
-        setInitializing(false);
-      }
-    }
+
+  }
+  
+  function onAuthStateChanged(result) {
+    if (debounceTimeout)
+        clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(() =>
+    {
+        debounceTimeout = null;
+
+        handleAuthStateChanged(result);
+    }, DebounceDueTime);
   }
 
   useEffect(() => {
@@ -62,24 +96,40 @@ function AuthNavigator({
     // unsubscribe on unmount
     return authSubscriber;
   }, [initializing, onAuthStateChanged]);
-
   if (!user || initializing) {
     return <AuthScreen />;
-  } if (isRegistered) {
+  } if (user.isRegistered) {
     return <SignInStack />;
+  } else {
+    return (<div>You are not registered</div>)
   }
-  return <Registration />;
 }
 
-const mapStateToProps = (state) => ({ user: state.auth.user, isRegistered: state.auth.user && state.auth.user.isRegistered });
+AuthNavigator.propTypes = {
+  user: PropTypes.object,
+  userInitializing: PropTypes.bool,
+  userIdsInitializing: PropTypes.bool,
+  groupInitializing: PropTypes.bool,
+  transactionInitializing: PropTypes.bool,
+  loadUser: PropTypes.func,
+  loadUsersByIds: PropTypes.func,
+  loadGroups: PropTypes.func,
+  loadTransactions: PropTypes.func,
+}
+const mapStateToProps = (state) => ({ 
+  user: state.auth.user,
+  userInitializing: state.auth.isInitializing,
+  userIdsIsInitializing: state.auth.idsIsInitializing,
+  groupInitializing: state.group.isInitializing,
+  transactionInitializing: state.transaction.isInitializing,
+});
 
 export default connect(
   mapStateToProps,
   {
     loadUser,
-    loadDomains,
-    loadIncomingMail,
-    loadMasterMail,
-    loadUserMail,
+    loadUsersByIds,
+    loadGroups,
+    loadTransactions,
   },
 )(AuthNavigator);

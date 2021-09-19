@@ -12,6 +12,13 @@ export function getCurrentUser({params} = {}) {
   return api.get('/v1/user/me', {params});
 }
 
+export function getUsersByEmail({email} = {}) {
+  return api.get('/v1/user/email', {params: {email}});
+}
+
+export function getUsersByIds({ids} = {}) {
+  return api.get('/v1/user/ids', { params: { ids } });
+}
 /**
  * 
  * @param {object} user. data to update can be 
