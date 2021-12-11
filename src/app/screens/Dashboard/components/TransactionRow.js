@@ -31,6 +31,7 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
+    InputLeftAddon,
 } from '@chakra-ui/react';
 
 function TransactionRow({
@@ -48,7 +49,7 @@ function TransactionRow({
                 <Spacer />
                 <Spacer />
                 <Spacer />
-                <Text fontSize='20px' marginLeft={3}>{`$ ${amount}`}</Text>
+                <Text fontSize='20px' marginLeft={3}>{`$ ${amount.toFixed(2)}`}</Text>
                 <Button onClick={onOpen} marginLeft={3}>Pay</Button>
             </Flex>
             <Modal isOpen={isOpen} onClose={onClose}>
@@ -59,15 +60,21 @@ function TransactionRow({
 
                     <ModalBody>
                         <Flex direction='column'>
-                            <NumberInput onChange={(val) => setInputAmount(val)}>
-                                <NumberInputField />
-                                <NumberInputStepper>
-                                    <NumberIncrementStepper />
-                                    <NumberDecrementStepper />
-                                </NumberInputStepper>
-                            </NumberInput>
+                            <InputGroup width='100%' justifyContent='center'>
+                                <InputLeftAddon>$</InputLeftAddon>
+                                <NumberInput onChange={(val) => setInputAmount(val)}  precision={2} width='100%'>
+                                    <NumberInputField />
+                                    <NumberInputStepper>
+                                        <NumberIncrementStepper />
+                                        <NumberDecrementStepper />
+                                    </NumberInputStepper>
+                                </NumberInput>
+                            </InputGroup>
                             <Input onChange={(e)=>setMessage(e.target.value)} placeholder='Put message' marginTop={3} />
-                            <Button onClick={()=>pay(transactionUser._id, inputAmount, message)} marginTop={4}>Pay</Button>
+                            <Button onClick={()=>{
+                                pay(transactionUser._id, inputAmount, message)
+                                onClose()
+                            }} marginTop={4}>Pay</Button>
                         </Flex>
                     </ModalBody>
 

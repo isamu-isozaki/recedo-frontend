@@ -121,11 +121,13 @@ export default function groupReducer(state = initialState,
             const {groupId} = payload
             const newById = _.omitBy({...state.byId}, {_id: groupId})
             const newGroupIds = state.groupIds.filter(id => id !== groupId)
+            const newSelectedGroup = newGroupIds && newGroupIds[0]
             return {
                 ...state,
                 byId: newById,
                 groupIds: newGroupIds,
-                deepUpdate: !state.deepUpdate
+                deepUpdate: !state.deepUpdate,
+                selectedGroup: newSelectedGroup,
             };
         }
         case CREATE_GROUP_SUCCESS: {
@@ -140,7 +142,7 @@ export default function groupReducer(state = initialState,
             };
         }
         case GROUP_FAIL: {
-            console.log('FAIL')
+            console.log(type)
             return state
         }
         default:
@@ -185,9 +187,8 @@ export function invite(groupId, invitedUserId) {
 
 export function cancelInvite(groupId, userId) {
     return async (dispatch) => {
-        console.log('Cancelled')
         try {
-            const { payload } = await putCancelInvite({ groupId, userId });
+            await putCancelInvite({ groupId, userId });
             dispatch({ type: CANCEL_INVITE_SUCCESS, payload: { groupId, invitedUserId: userId } });
             return { groupId, invitedUserId: userId }
         }
@@ -201,7 +202,6 @@ export function cancelInvite(groupId, userId) {
 
 export function acceptInvite(groupId, userId) {
     return async (dispatch) => {
-        console.log('Accepted')
         try {
             const { payload } = await putAcceptInvite({ groupId });
             dispatch({ type: ACCEPT_INVITE_SUCCESS, payload: { groupId, userId } });

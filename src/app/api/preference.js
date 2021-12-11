@@ -12,10 +12,11 @@ export function getPreferences({params} = {}) {
     return api.get('/v1/preference', {params});
 }
 
-export function getUserPreferences({ groupId, userId }  = {}) {
+export function getUserPreferences(groupId, userId) {
+    // Don't implement for now
     return api.get('/v1/preference/user', { params: { groupId, userId } } );
 }
 
-export function putPreference({ receiptId, wishlistItemId, want } = {}) {
-    return api.put('/v1/preference', { receiptId, wishlistItemId, want });
+export function putPreference(wishlistId, wishlistItemId, want) {
+    return api.put('/v1/preference', { wishlistId, wishlistItemId, want });
 }

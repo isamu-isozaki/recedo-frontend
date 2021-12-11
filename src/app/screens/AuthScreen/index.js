@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 import firebase from "firebase/app";
 import "firebase/auth";
-import { loadUser, doSignup, doLogin } from 'app/store/auth';
+import { doSignup, doLogin } from 'app/store/auth';
 import { connect } from 'react-redux';
 import { Flex, Spacer, Divider  } from "@chakra-ui/react";
 import PropTypes from 'prop-types';
@@ -16,7 +16,6 @@ import LoginForm from "./components/LoginForm";
 
 //const IMAGE_WIDTH = metrics.DEVICE_WIDTH * 0.8;
 function AuthScreen({
-  loadUser, 
   doLogin,
   doSignup,
 }){
@@ -24,9 +23,6 @@ function AuthScreen({
   const [isLoading, setIsLoading] = useState(false);
   const [visibleForm, setVisibleForm] = useState(null);
 
-  const loadEverything = async () =>  {
-    await loadUser();
-  }
   const handleLoginException = async (e) => {
     let message = "";
     switch (e.code) {
@@ -107,14 +103,12 @@ function AuthScreen({
 }
 
 AuthScreen.propTypes = {
-  loadUser: PropTypes.func,
   doLogin: PropTypes.func,
   doSignup: PropTypes.func,
 }
 export default connect(
   null, 
   {
-    loadUser, 
     doSignup,
     doLogin,
   },

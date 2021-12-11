@@ -12,6 +12,7 @@ import {
     Text,
     Button,
     Stack,
+    useColorMode,
 } from '@chakra-ui/react';
 import {
     HamburgerIcon,
@@ -123,7 +124,7 @@ NavBarContainer.propTypes = {
 }
 function Navbar({doLogout, ...props}) {
     const [isOpen, setIsOpen] = useState(false)
- 
+    const { colorMode, toggleColorMode } = useColorMode()
     const toggle = () => setIsOpen(!isOpen)
     /**
      * Logs out from firebase
@@ -144,6 +145,9 @@ function Navbar({doLogout, ...props}) {
             <MenuToggle toggle={toggle} isOpen={isOpen} />
             <MenuLinks isOpen={isOpen} />
             <Flex>
+                <Button onClick={toggleColorMode}>
+                    Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
+                </Button>
                 <MenuItem to="/settings"><Button variant='ghost'><SettingsIcon /></Button></MenuItem>
                 <Button onClick={logOut} variant='ghost'>Logout</Button>
             </Flex>             

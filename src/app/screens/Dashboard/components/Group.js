@@ -23,6 +23,7 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
+    Heading,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
@@ -56,7 +57,7 @@ function Group({
         <>
             <Flex direction='column'>
                 <Flex direction='column'>
-                    <Text fontSize='25px'>Groups</Text>
+                    <Heading as="h4" size="md">Groups</Heading>
                     <Flex direction='row'>
                         <Spacer />
                         <Flex direction='column'>
@@ -66,7 +67,7 @@ function Group({
                     </Flex>
                 </Flex>
                 <Flex direction='column'>
-                    <Text fontSize='25px'>Invites</Text>
+                    <Heading as="h4" size="md">Invites</Heading>
                     <Flex direction='row'>
                         <Spacer />
                         <Flex direction='column'>

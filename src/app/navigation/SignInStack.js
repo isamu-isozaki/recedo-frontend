@@ -7,6 +7,8 @@ import Navbar from '../components/Navbar';
 
 import Settings from '../screens/Settings';
 import Dashboard from '../screens/Dashboard';
+import Wishlist from '../screens/Wishlist';
+
 
 /**
  * Set up routes to each component
@@ -22,6 +24,9 @@ function SignInStack() {
           </Route>
           <Route path='/settings'>
             <Settings/>
+          </Route>
+          <Route path='/wishlist'>
+            <Wishlist/>
           </Route>
         </Switch></div>
     </BrowserRouter>

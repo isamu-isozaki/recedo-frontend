@@ -8,7 +8,7 @@ Modified By: Isamu Isozaki
 
 import api from './index';
 
-export function getReceipt({receiptId} = {}) {
+export function getReceipt(receiptId) {
     return api.get('/v1/receipt', { params: { receiptId } });
 }
 
@@ -16,30 +16,50 @@ export function getReceipts({params} = {}) {
     return api.get('/v1/receipt/me', {params});
 }
 
-export function updateItemPrice({ receiptItemId, price } = {}) {
+export function searchProductNames(name) {
+    return api.get('/v1/receipt/searchProductNames', {params: {name}});
+}
+
+export function putItemPrice(receiptItemId, price) {
     return api.put('/v1/receipt/price', { receiptItemId, price });
 }
 
-export function updateItemQuantity({ receiptItemId, quantity } = {}) {
+export function putItemQuantity(receiptItemId, quantity) {
     return api.put('/v1/receipt/quantity', { receiptItemId, quantity });
 }
 
-export function setWishlistItem({ receiptItemId, wishlistItemId } = {}) {
+export function putPayer(receiptId, payerId) {
+    return api.put('/v1/receipt/payer', { receiptId, payerId });
+}
+
+export function putTax(receiptId, tax) {
+    return api.put('/v1/receipt/tax', { receiptId, tax });
+}
+
+export function putTotalCost(receiptId, totalCost) {
+    return api.put('/v1/receipt/totalCost', { receiptId, totalCost });
+}
+
+export function setWishlistItem(receiptItemId, wishlistItemId) {
     return api.put('/v1/receipt/setWishlistItem', { receiptItemId, wishlistItemId });
 }
 
-export function deleteReceipt({ receiptId }  = {}) {
-    return api.delete('/v1/receipt', { receiptId } );
+export function deleteReceipt(receiptId) {
+    return api.delete('/v1/receipt', { params: {receiptId} } );
 }
 
-export function deleteReceiptItem({ receiptId, receiptItemId } = {}) {
-    return api.delete('/v1/receipt/item', { receiptId, receiptItemId });
+export function deleteReceiptItem(receiptId, receiptItemId) {
+    return api.delete('/v1/receipt/item', { params: {receiptId, receiptItemId} });
 }
 
-export function postReceipt({ payerId, wishlistId, receiptImg, tax }  = {}) {
-    return api.post('/v1/receipt', { payerId, wishlistId, receiptImg, tax });
+export function postReceipt(data) {
+    return api.post('/v1/receipt', data);
 }
 
-export function postReceiptItems({ receiptId, receiptItems } = {}) {
-    return api.post('/v1/receipt/item', { receiptId, receiptItems });
+export function postReceiptImg(data) {
+    return api.post('/v1/receipt/img', data);
+}
+
+export function postReceiptItem(receiptId, receiptItem) {
+    return api.post('/v1/receipt/item', { receiptId, receiptItem });
 }

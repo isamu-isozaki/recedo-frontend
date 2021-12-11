@@ -39,7 +39,7 @@ export default function transactionReducer(state = initialState,
             return {...state, byId: newById, fromIds: newFromIds}
         }
         case TRANSACTION_FAIL: {
-            console.log('FAIL')
+            console.log(type)
             return state
         }
         default:
@@ -52,10 +52,11 @@ export function loadTransactions({params} = {}) {
         try {
             const { payload } = await getTransactions({ params });
             const {fromTransactions, toTransactions} = payload;
-            dispatch({ type: LOAD_TRANSACTION_SUCCESS, payload: { fromTransactions, toTransactions } });
+            dispatch({ type: LOAD_TRANSACTION_SUCCESS, payload: { fromTransactions, toTransactions } })
             return { fromTransactions, toTransactions }
         }
         catch (e) {
+            console.log(e)
             dispatch({ type: TRANSACTION_FAIL, payload: {} });
             return e
         }

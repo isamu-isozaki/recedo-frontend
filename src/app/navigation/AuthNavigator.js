@@ -7,10 +7,11 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import { loadUser, loadUsersByIds } from 'app/store/auth';
 import { loadGroups } from 'app/store/group';
+import { loadPreferences } from 'app/store/preference';
+import { loadReceipts } from 'app/store/receipt';
 import { loadTransactions } from 'app/store/transaction';
-
-
-
+import { loadWishlists, loadWishlistItemsByIds } from 'app/store/wishlist';
+import {keyBy} from 'lodash';
 import { connect } from 'react-redux';
 import AuthScreen from '../screens/AuthScreen';
 import SignInStack from './SignInStack';
@@ -45,29 +46,32 @@ function AuthNavigator({
   userInitializing,
   userIdsIsInitializing,
   groupInitializing,
+  preferenceInitializing,
+  receiptInitializing,
   transactionInitializing,
+  wishlistInitializing,
   loadUser,
   loadUsersByIds,
   loadGroups,
-  loadTransactions
+  loadPreferences,
+  loadReceipts,
+  loadTransactions,
+  loadWishlists,
+  loadWishlistItemsByIds,
 }) {
   const [initializing, setInitializing] = useState(true);
   const [preinitializing, setPreinitializing] = useState(true);
-  const loadedEverything = !userInitializing && !userIdsIsInitializing && !groupInitializing && !transactionInitializing;
-
+  const loadedEverything = !userInitializing && !userIdsIsInitializing && !groupInitializing && !preferenceInitializing && !receiptInitializing && !transactionInitializing && !wishlistInitializing;
   const DebounceDueTime = 400;
   let debounceTimeout;
   // Below relies on the fact that auth change gets called multiple times unpredictably. fix so that
   // once everything is loaded, it can mobe on to 
   async function handleAuthStateChanged(result) {
     if (!result) {
-      console.log('no result')
       setInitializing(true);
     } if(initializing && loadedEverything) {
-      console.log('loaded everything')
       setInitializing(false)
     } if (result && initializing && preinitializing) {
-      console.log('init')
       setPreinitializing(false)
       // Only do the below once
       const user = await loadUser()
@@ -75,6 +79,15 @@ function AuthNavigator({
       const additionalUsers = getGroupUsers({...groups, ...invitedGroups}, Object.keys(groups), Object.keys(invitedGroups), [user._id])
       await loadUsersByIds(additionalUsers)
       await loadTransactions()
+      await loadPreferences()
+      const wishlists = await loadWishlists()
+      let wishlistItems = []
+      Object.keys(wishlists).forEach(wishlistKey => {
+        wishlistItems = [...wishlistItems, ...wishlists[wishlistKey].wishlistItemIds]
+      })
+      wishlistItems = wishlistItems.filter(onlyUnique)
+      await loadWishlistItemsByIds(wishlistItems)
+      await loadReceipts()
     }
 
   }
@@ -110,18 +123,28 @@ AuthNavigator.propTypes = {
   userInitializing: PropTypes.bool,
   userIdsInitializing: PropTypes.bool,
   groupInitializing: PropTypes.bool,
+  preferenceInitializing: PropTypes.bool,
+  receiptInitializing: PropTypes.bool,
   transactionInitializing: PropTypes.bool,
+  wishlistInitializing: PropTypes.bool,
   loadUser: PropTypes.func,
   loadUsersByIds: PropTypes.func,
   loadGroups: PropTypes.func,
+  loadPreferences: PropTypes.func,
+  loadReceipts: PropTypes.func,
   loadTransactions: PropTypes.func,
+  loadWishlists: PropTypes.func,
+  loadWishlistItemsByIds: PropTypes.func,
 }
 const mapStateToProps = (state) => ({ 
   user: state.auth.user,
   userInitializing: state.auth.isInitializing,
   userIdsIsInitializing: state.auth.idsIsInitializing,
   groupInitializing: state.group.isInitializing,
+  preferenceInitializing: state.preference.isInitializing,
+  receiptInitializing: state.receipt.isInitializing,
   transactionInitializing: state.transaction.isInitializing,
+  wishlistInitializing: state.wishlist.isInitializing,
 });
 
 export default connect(
@@ -130,6 +153,10 @@ export default connect(
     loadUser,
     loadUsersByIds,
     loadGroups,
+    loadPreferences,
+    loadReceipts,
     loadTransactions,
+    loadWishlists,
+    loadWishlistItemsByIds,
   },
 )(AuthNavigator);
