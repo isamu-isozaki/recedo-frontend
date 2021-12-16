@@ -121,7 +121,7 @@ function AuthNavigator({
 AuthNavigator.propTypes = {
   user: PropTypes.object,
   userInitializing: PropTypes.bool,
-  userIdsInitializing: PropTypes.bool,
+  userIdsIsInitializing: PropTypes.bool,
   groupInitializing: PropTypes.bool,
   preferenceInitializing: PropTypes.bool,
   receiptInitializing: PropTypes.bool,
