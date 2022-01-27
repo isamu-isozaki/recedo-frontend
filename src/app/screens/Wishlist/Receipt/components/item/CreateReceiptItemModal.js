@@ -108,7 +108,7 @@ function CreateReceiptItemModal({ itemById, createReceiptItem, loadProductNames,
                                 </NumberInput>
                             </InputGroup>
                             <Button marginTop={4} onClick={() => {
-                                createReceiptItem(receipt._id, {name: searchName, price: Number(price), quantity: parseInt(quantity)})
+                                createReceiptItem(receipt._id, {name: searchName, price: Number(price), quantity: Number(quantity)})
                             }}>Create</Button>
                         </Flex>
                     </ModalBody>
