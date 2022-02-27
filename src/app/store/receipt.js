@@ -108,8 +108,14 @@ export default function receiptReducer(state = initialState,
         case UPDATE_WISHLIST_ITEM_SUCCESS: {
             const { receiptId, receiptItemId, wishlistItemId } = payload
             const newById = state.byId
-            newById[receiptId].receiptItems[receiptItemId].wishlistItemId = wishlistItemId
-            newById[receiptId].receiptItems[receiptItemId].wishlistItemSet = true
+            const receiptItems = newById[receiptId].receiptItems
+            for(let i = 0; i < receiptItems.length; i++) {
+                if(receiptItemId === receiptItems[i]._id) {
+                    newById[receiptId].receiptItems[i].wishlistItemId = wishlistItemId
+                    newById[receiptId].receiptItems[i].wishlistItemSet = true
+                }
+            }
+            
             const finishedTransaction = computeFinishedTransaction(newById[receiptId])
             newById[receiptId].finishedTransaction = finishedTransaction
             return {...state, byId: newById, deepUpdate: !state.deepUpdate}
