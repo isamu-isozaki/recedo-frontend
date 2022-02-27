@@ -22,3 +22,6 @@ google_credentials.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+package-lock.json
+pnpm-lock.yaml

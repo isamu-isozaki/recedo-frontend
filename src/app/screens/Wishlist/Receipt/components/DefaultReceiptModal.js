@@ -116,7 +116,7 @@ function DefaultReceiptModal({
                                 </RadioGroup>
                             </Flex>
                             
-                            <FormLabel as="legend">Input Total Cost</FormLabel>
+                            <FormLabel as="legend">Input Subtotal Cost(Without tax)</FormLabel>
                             <InputGroup width='100%' justifyContent='center'>
                                 <InputLeftAddon>$</InputLeftAddon>
                                 <NumberInput isDisabled={receiptNotEditable} defaultValue={receipt.totalCost} onChange={(val) => setTotalCost(Number(val))} width='100%'>
@@ -127,7 +127,7 @@ function DefaultReceiptModal({
                                     </NumberInputStepper>
                                 </NumberInput>
                             </InputGroup>
-                            <FormLabel as="legend">Input Tax</FormLabel>
+                            <FormLabel as="legend">Input Tax/Fees(Can be negative)</FormLabel>
                             <InputGroup width='100%' justifyContent='center'>
                                 <InputLeftAddon>$</InputLeftAddon>
                                 <NumberInput isDisabled={receiptNotEditable} defaultValue={receipt.tax} onChange={(val) => setTax(Number(val))} width='100%'>

@@ -98,8 +98,8 @@ function CreateReceiptItemModal({ itemById, createReceiptItem, loadProductNames,
                                 </NumberInput>
                             </InputGroup>
                             <Text>Quantity</Text>
-                            <InputGroup width='100%' justifyContent='center' step={1}>
-                                <NumberInput onChange={(val) => setQuantity(val)}  precision={0} width='100%'>
+                            <InputGroup width='100%' justifyContent='center'>
+                                <NumberInput onChange={(val) => setQuantity(val)}  precision={2} width='100%'>
                                     <NumberInputField />
                                     <NumberInputStepper>
                                         <NumberIncrementStepper />
@@ -108,7 +108,7 @@ function CreateReceiptItemModal({ itemById, createReceiptItem, loadProductNames,
                                 </NumberInput>
                             </InputGroup>
                             <Button marginTop={4} onClick={() => {
-                                createReceiptItem(receipt._id, {name: searchName, price: Number(price), quantity: parseInt(quantity)})
+                                createReceiptItem(receipt._id, {name: searchName, price: Number(price), quantity: Number(quantity)})
                             }}>Create</Button>
                         </Flex>
                     </ModalBody>

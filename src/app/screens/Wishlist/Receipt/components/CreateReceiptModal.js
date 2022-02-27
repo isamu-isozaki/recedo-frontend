@@ -58,7 +58,7 @@ function CreateReceiptModal({
     const [payerId, setPayerId] = useState(groupUserIds[0])
     const [totalCost, setTotalCost] = useState(0)
     const [tax, setTax] = useState(0)
-    const canCreate = (totalCost > 0) && (tax >= 0) && groupUserIds.includes(payerId) && (totalCost > tax)  && (imgs.length > 0)
+    const canCreate = (totalCost > 0) && groupUserIds.includes(payerId) && (totalCost > tax) && (totalCost > -tax)  && (imgs.length > 0)
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay>
@@ -89,7 +89,7 @@ function CreateReceiptModal({
                                     </RadioGroup>
                                 </Flex>
                                 
-                                <FormLabel as="legend">Input Total Cost</FormLabel>
+                                <FormLabel as="legend">Input Subtotal Cost(Without tax)</FormLabel>
                                 <InputGroup width='100%' justifyContent='center'>
                                     <InputLeftAddon>$</InputLeftAddon>
                                     <NumberInput onChange={(val) => setTotalCost(Number(val))} width='100%'>
@@ -100,7 +100,7 @@ function CreateReceiptModal({
                                         </NumberInputStepper>
                                     </NumberInput>
                                 </InputGroup>
-                                <FormLabel as="legend">Input Tax</FormLabel>
+                                <FormLabel as="legend">Input Tax/Fees(Can be negative)</FormLabel>
                                 <InputGroup width='100%' justifyContent='center'>
                                     <InputLeftAddon>$</InputLeftAddon>
                                     <NumberInput onChange={(val) => setTax(Number(val))} width='100%'>

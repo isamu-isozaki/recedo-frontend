@@ -59,7 +59,7 @@ const computeFinishedTransaction = (receipt) => {
         receiptItemTotal+=receiptItem.price*receiptItem.quantity
         allItemsSet = allItemsSet && receiptItem.wishlistItemSet
     })
-    return allItemsSet && (receiptItemTotal === receipt.totalCost)
+    return allItemsSet && (receiptItemTotal.toFixed(2) === receipt.totalCost.toFixed(2))
 }
 
 export default function receiptReducer(state = initialState, 
