@@ -131,7 +131,7 @@ function UpdateReceiptItemModal({ isOpen, onClose, receiptItem, receipt, wishlis
                                 updateItemPrice(receipt._id, receiptItem._id, Number(price))
                             }
                             if(quantityChanged) {
-                                updateItemQuantity(receipt._id, receiptItem._id, parseInt(quantity))
+                                updateItemQuantity(receipt._id, receiptItem._id, Number(quantity))
                             }
                             if(receipt.finishedTransaction) {
                                 loadTransactions()
