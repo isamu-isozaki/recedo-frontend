@@ -59,8 +59,6 @@ const computeFinishedTransaction = (receipt) => {
         receiptItemTotal+=receiptItem.price*receiptItem.quantity
         allItemsSet = allItemsSet && receiptItem.wishlistItemSet
     })
-    console.log(receiptItemTotal.toFixed(2))
-    console.log(receipt.totalCost.toFixed(2))
     return allItemsSet && (receiptItemTotal.toFixed(2) === receipt.totalCost.toFixed(2))
 }
 
@@ -248,7 +246,6 @@ export function updateItemQuantity(receiptId, receiptItemId, quantity) {
 export function updateWishlistItem(receiptId, receiptItemId, wishlistItemId) {
     return async (dispatch) => {
         try {
-            console.log('Updating wishlist item')
             // On every call of updating wishlistItem, call loadTransactions from the server
             await setWishlistItem(receiptItemId, wishlistItemId)
             dispatch({ type: UPDATE_WISHLIST_ITEM_SUCCESS, payload: {receiptId, receiptItemId, wishlistItemId} })
