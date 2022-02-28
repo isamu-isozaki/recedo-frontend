@@ -76,7 +76,7 @@ function DefaultReceiptModal({
     const receiptItems = itemIds.map(itemId => receipt.receiptItems[itemId])
     let receiptItemTotal = 0
     receiptItems.forEach(receiptItem => {
-        receiptItemTotal+=receiptItem.price*receiptItem.quantity
+        receiptItemTotal+=Number((receiptItem.price*receiptItem.quantity).toFixed(2))
     })
     const receiptNotEditable = receipt.finishedTransaction
     return (
