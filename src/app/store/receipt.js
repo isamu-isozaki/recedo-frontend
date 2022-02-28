@@ -56,7 +56,7 @@ const computeFinishedTransaction = (receipt) => {
     let receiptItemTotal = 0
     let allItemsSet = true
     receiptItems.forEach(receiptItem => {
-        receiptItemTotal+=receiptItem.price*receiptItem.quantity
+        receiptItemTotal+=Number((receiptItem.price*receiptItem.quantity).toFixed(2))
         allItemsSet = allItemsSet && receiptItem.wishlistItemSet
     })
     return allItemsSet && (receiptItemTotal.toFixed(2) === receipt.totalCost.toFixed(2))
