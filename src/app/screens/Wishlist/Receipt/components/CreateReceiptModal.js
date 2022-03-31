@@ -7,7 +7,7 @@ Modified By: modifier
 */
 import { connect } from 'react-redux'
 import React, {useState} from 'react';
-import { createReceipt } from 'app/store/receipt';
+import { createReceipt, createReceiptItem } from 'app/store/receipt';
 import { loadTransactions } from 'app/store/transaction';
 
 import ImageUploader from 'app/components/ImageUploader';
@@ -50,6 +50,7 @@ function CreateReceiptModal({
     selectedGroup,
     createReceipt,
     loadTransactions,
+    createReceiptItem,
 }) {
     const group = groupById[selectedGroup]
     const groupUserIds = group.userIds
@@ -153,6 +154,7 @@ CreateReceiptModal.propTypes = {
     selectedGroup: PropTypes.string,
     createReceipt: PropTypes.func,
     loadTransactions: PropTypes.func,
+    createReceiptItem: PropTypes.func,
 }
 
 const mapStateToProps = (state) => ({
