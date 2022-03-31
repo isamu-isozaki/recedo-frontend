@@ -6,8 +6,9 @@ Modified: !date!
 Modified By: modifier
 */
 import { connect } from 'react-redux'
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import ImageUploader from 'app/components/ImageUploader';
+import JsonUploader from 'app/components/JsonUploader';
 import {
     Spacer,
     Flex,
@@ -44,7 +45,10 @@ import {
     TableCaption,
 } from '@chakra-ui/react'
 
-import {createReceiptImg, updatePayer, updateTax, updateTotalCost} from 'app/store/receipt'
+import {createReceiptImg, createReceiptItem, updatePayer, updateTax, updateTotalCost} from 'app/store/receipt'
+import {loadWishlist} from 'app/store/wishlist';
+import {loadReceipt} from 'app/store/receipt';
+
 
 import PropTypes from 'prop-types'
 import CreateReceiptItemModal from './item/CreateReceiptItemModal'
@@ -58,9 +62,12 @@ function DefaultReceiptModal({
     groupById,
     selectedGroup,
     createReceiptImg,
+    createReceiptItem,
     updatePayer, 
     updateTax, 
-    updateTotalCost
+    updateTotalCost,
+    loadWishlist,
+    loadReceipt
 }) {
     const group = groupById[selectedGroup]
     const [imgs, setImgs] = useState([])
@@ -79,6 +86,21 @@ function DefaultReceiptModal({
         receiptItemTotal+=Number((receiptItem.price*receiptItem.quantity).toFixed(2))
     })
     const receiptNotEditable = receipt.finishedTransaction
+    
+    const uploadJson = async (file) => {
+        const json = JSON.parse(await file.text())
+        if(!!json['items'] & !!json['prices'] & !!json['quantities'] & (json['items'].length === json['prices'].length) & (json['prices'].length === json['quantities'].length)){
+            const items = json['items']
+            const prices = json['prices']
+            const quantities = json['quantities']
+            for(let i=0; i<items.length; i++){
+                await createReceiptItem(receipt._id, {name: items[i], price: Number(prices[i]), quantity: Number(quantities[i])})
+            }
+            // Load wishlist items
+            await loadWishlist(receipt.wishlistId);
+            await loadReceipt(receipt._id);
+        }
+    }
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay>
@@ -155,16 +177,17 @@ function DefaultReceiptModal({
                                 }}>Submit Changes</Button>
                             </Flex>
                             <FormLabel as="legend">Receipt Items</FormLabel>
+                            <JsonUploader uploadJson={uploadJson} canUpload={!receiptNotEditable} />
                             <Table variant="simple">
                                 <Thead>
                                     <Tr>
-                                    <Th>Item Name</Th>
-                                    <Th>Price</Th>
-                                    <Th>Quantity</Th>
-                                    <Th>Total</Th>
-                                    <Th>Wishlist Item</Th>
-                                    <Th>Edit</Th>
-                                    <Th>Delete</Th>
+                                        <Th>Item Name</Th>
+                                        <Th>Price</Th>
+                                        <Th>Quantity</Th>
+                                        <Th>Total</Th>
+                                        <Th>Wishlist Item</Th>
+                                        <Th>Edit</Th>
+                                        <Th>Delete</Th>
                                     </Tr>
                                 </Thead>
                                 <Tbody>
@@ -196,9 +219,13 @@ DefaultReceiptModal.propTypes = {
     groupById: PropTypes.object,
     selectedGroup: PropTypes.string,
     createReceiptImg: PropTypes.func,
+    createReceiptItem: PropTypes.func,
     updatePayer: PropTypes.func,
     updateTax: PropTypes.func,
     updateTotalCost: PropTypes.func,
+    loadWishlist: PropTypes.func,
+    loadReceipt: PropTypes.func,
+
 }
 
 const mapStateToProps = (state) => ({
@@ -214,6 +241,9 @@ export default connect(
         createReceiptImg,
         updatePayer, 
         updateTax, 
-        updateTotalCost
+        updateTotalCost,
+        createReceiptItem,
+        loadWishlist,
+        loadReceipt
     },
 )(DefaultReceiptModal);
