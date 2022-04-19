@@ -41,15 +41,18 @@ function TransactionRow({
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [inputAmount, setInputAmount] = useState(0)
     const [message, setMessage] = useState(0)
-
+    let preMessage = `${transactionUser.nameFirst} ${transactionUser.nameLast} owes you`
+    if (amount < 0) {
+        preMessage = `You owe ${transactionUser.nameFirst} ${transactionUser.nameLast}`
+    }
     return (
         <>
             <Flex direction='row' marginTop={5}>
-                <Text fontSize='20px'>{`${transactionUser.nameFirst} ${transactionUser.nameLast}`}</Text>
+                <Text fontSize='20px'>{preMessage}</Text>
                 <Spacer />
                 <Spacer />
                 <Spacer />
-                <Text fontSize='20px' marginLeft={3}>{`$ ${amount.toFixed(2)}`}</Text>
+                <Text fontSize='20px' marginLeft={3}>{`$ ${Math.abs(amount).toFixed(2)}`}</Text>
                 <Button onClick={onOpen} marginLeft={3}>Pay</Button>
             </Flex>
             <Modal isOpen={isOpen} onClose={onClose}>
