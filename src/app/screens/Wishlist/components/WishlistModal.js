@@ -35,7 +35,9 @@ function WishlistModal({
     isOpen,
     onClose,
 }) {
-    const wishlistItems = wishlist.wishlistItemIds.map(itemId => itemById[itemId]);
+    const noDuplicateWishlistItems = [...new Set(wishlist.wishlistItemIds)];
+    const wishlistItems = noDuplicateWishlistItems.map(itemId => itemById[itemId])
+
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay>

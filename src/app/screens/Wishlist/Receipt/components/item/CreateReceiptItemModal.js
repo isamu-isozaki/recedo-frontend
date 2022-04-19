@@ -84,7 +84,7 @@ function CreateReceiptItemModal({ itemById, createReceiptItem, loadProductNames,
                                 </InputRightElement>
                             </InputGroup>
                             <Flex direction='column' marginTop={5}>
-                                {itemRows}
+                                {itemRows.slice(0, 3)}
                             </Flex>
                             <Text>Price</Text>
                             <InputGroup width='100%' justifyContent='center'>
