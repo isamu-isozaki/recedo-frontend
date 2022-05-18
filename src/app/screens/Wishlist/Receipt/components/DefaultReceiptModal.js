@@ -53,6 +53,7 @@ import {loadReceipt} from 'app/store/receipt';
 import PropTypes from 'prop-types'
 import CreateReceiptItemModal from './item/CreateReceiptItemModal'
 import ReceiptItemRow from './item/ReceiptItemRow'
+import {getJson} from 'app/api/receipt'
 
 function DefaultReceiptModal({
     receipt,
@@ -100,6 +101,21 @@ function DefaultReceiptModal({
             await loadWishlist(receipt.wishlistId);
             await loadReceipt(receipt._id);
         }
+    }
+
+    const downloadReceipt = async () => {
+        const {payload} = await getJson(receipt._id)
+        const blob = new Blob([JSON.stringify(payload)], {type: "application/json"})
+        const a = document.createElement('a')
+        a.download = payload['payer']['nameFirst']+'_'+payload['wishlist']['name']+'.json'
+        a.href = window.URL.createObjectURL(blob)
+        const clickEvt = new MouseEvent('click', {
+            view: window,
+            bubbles: true,
+            cancelable: true,
+        })
+        a.dispatchEvent(clickEvt)
+        a.remove()   
     }
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -177,6 +193,7 @@ function DefaultReceiptModal({
                                 }}>Submit Changes</Button>
                             </Flex>
                             <FormLabel as="legend">Receipt Items</FormLabel>
+                            {receiptNotEditable && <Button onClick={downloadReceipt}>Download recipt</Button>}
                             <JsonUploader uploadJson={uploadJson} canUpload={!receiptNotEditable} />
                             <Table variant="simple">
                                 <Thead>

@@ -8,6 +8,10 @@ Modified By: Isamu Isozaki
 
 import api from './index';
 
+export function getJson(receiptId) {
+    return api.get('/v1/receipt/json', { params: { receiptId } });
+}
+
 export function getReceipt(receiptId) {
     return api.get('/v1/receipt', { params: { receiptId } });
 }
